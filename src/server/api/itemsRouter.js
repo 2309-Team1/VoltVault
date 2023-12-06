@@ -19,6 +19,7 @@ itemRouter.get('/', async (req, res, next) => {
     console.log('THIS IS ITEMS: ', items)
     res.send(items);
   } catch (err) {
+    console.log('try again')
     next(err);
   }
 });

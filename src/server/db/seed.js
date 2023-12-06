@@ -42,7 +42,7 @@ async function createTables() {
       name TEXT,
       price DECIMAL(10, 2),
       details TEXT,
-      img VARCHAR (55),
+      img VARCHAR (255),
       category TEXT,
       stock INT
      );
