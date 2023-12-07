@@ -172,16 +172,14 @@ async function createInitialItems() {
         id: 1,
         name: "Apple iPhone 15 Pro Max",
         price: 1199.99,
-
         details: "Experience the ultimate iPhone with the iPhone 15 Pro Max. Choose between a 6.7\" or 6.1\" Super Retina XDR display featuring ProMotion technology and an Always-On display. The device boasts a sleek Titanium design with a textured matte glass back and an innovative Action button. Powered by the A17 Pro chip with a 6-core GPU, enjoy a magical interaction with the Dynamic Island feature. Capture stunning photos with the Pro camera system, including a 48MP Main, Ultra Wide, and Telephoto lens. Emergency SOS, Crash Detection, and Roadside Assistance via satellite provide added safety features. With up to 29 hours of video playback, USB‑C support, and Face ID, the iPhone 15 Pro Max is the epitome of cutting-edge technology.",
         img: '',
         category: 'phone',
-
+        tags: ['tag3', 'tag4'],
         stock: 10,
       },
       {
         id: 2,
-
         name: 'MacBook Pro',
         price: 2500.69,
         details: "Unleash the power of the Apple M3 Max chip in the MacBook Pro. Featuring a 16‑core CPU, 40‑core GPU, and 16‑core Neural Engine, this powerhouse ensures unparalleled performance. With 48GB unified memory and a 1TB SSD, multitasking and storage are seamless. Immerse yourself in the stunning visuals of the 16-inch Liquid Retina XDR display. Stay connected with three Thunderbolt 4 ports, HDMI, SDXC card slot, and MagSafe 3 port. The Backlit Magic Keyboard with Touch ID provides convenience and security. Includes a 140W USB-C Power Adapter for fast charging. Elevate your computing experience with this cutting-edge MacBook Pro.",
