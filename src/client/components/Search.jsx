@@ -7,12 +7,20 @@ function ItemSearch() {
   const [query, setQuery ] = useState('');
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await 
+    fetchItems();
+  }, []);
+
+  async function fetchItems() {
+    let API = "http://localhost:3000/api";
+
+    try {
+      const response = await axios.get(`${API}/items/`);
+      } catch (err){
+        console.log ('Error searching items')
       }
     }
+
+    
   }
 
-  )
-}
+  
