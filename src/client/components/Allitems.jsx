@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 // import ItemDetails from "./singleItemDetail";
 import { useNavigate } from "react-router-dom";
+import Wishlist from "./Wishlist";
 
 function AllItems() {
   const [items, setItems] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +23,21 @@ function AllItems() {
       console.error(err.message);
     }
   }
+  const addToWishlist = async (itemId) => {
+    console.log('Adding to wishlist:', itemId);
+    const itemToAdd = items.find((item) => item.id === itemId);
+    console.log('Item to add:', itemToAdd);
+  
+    if (!wishlist.find((item) => item.id === itemId)) {
+      await setWishlist(prevWishlist => [...prevWishlist, itemToAdd]);
+    }
+  };
+  
+
+  const removeFromWishlist = (itemId) => {
+    const updatedWishlist = wishlist.filter((item) => item.id !== itemId);
+    setWishlist(updatedWishlist);
+  };
 
   return (
     <div>
@@ -59,6 +76,8 @@ function AllItems() {
                   {" "}
                   Add item to Cart
                 </button>
+                <button type="button" onClick={() => addToWishlist(item.id)}>Add item to Wishlist
+                </button>
               </div>
             </li>
           ))}
@@ -70,6 +89,9 @@ function AllItems() {
           when he means to. 🧙‍♂️
         </h2>
       )}
+      <hr />
+      <Wishlist wishlist={wishlist} removeFromWishlist={removeFromWishlist} />
+      {console.log('Wishlist:', wishlist)}
     </div>
   );
 }
