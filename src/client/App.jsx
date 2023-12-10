@@ -8,6 +8,7 @@ import AllItems from "./components/Allitems";
 import UserAccount from "./components/UserAccount";
 import FilterForComputer from "./components/computerFilter";
 import FilterForPhone from "./components/PhoneFilter";
+import Wishlist from "./components/Wishlist";
 
 import ItemDetails from "./components/SingleItemDetail";
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="account" element={<UserAccount token={token} />} />
           <Route path="/computer" element={<FilterForComputer />} />
           <Route path="/phones" element={<FilterForPhone />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route
             path="/items/:itemid"
             element={<ItemDetails token={token} />}

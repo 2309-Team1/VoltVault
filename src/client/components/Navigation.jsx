@@ -33,15 +33,15 @@ export default function Navigations({ token }) {
             <li className="nav-item">
               <Link
                 className="nav-link active"
+                to="/wishlist"
                 aria-current="page"
-                target="_blank"
-                href="#"
+                
               >
                 Wishlist
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="#" target="_blank">
+              <Link className="nav-link" to="/" target="_blank">
                 Insert text
               </Link>
             </li>
