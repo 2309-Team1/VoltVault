@@ -14,14 +14,13 @@ NOTES ON CART.JSX
 
  */
 
-function Cart({ token, setToken, user, items, setItems, cart, setCart, totalCart, setTotalCart }) {
-  const { userId } = useParams();
+function Cart ({token, setToken, cart, setCart, user, items, setItems, totalCart, setTotalCart}) {
 
-  useEffect(() => {
-    if (token) {
-      fetchCart();
-    }
-  }, [token, userId]);
+useEffect(() => {
+  if (token){
+    fetchCart()
+  }
+}, [token])
 
   async function fetchCart() {
     try {
@@ -66,18 +65,15 @@ function Cart({ token, setToken, user, items, setItems, cart, setCart, totalCart
           "Authorization" : `Bearer ${token}`
         },
         body:JSON.stringify({
-          quantity: 1 
+          quantity
           // need to figure out how to PATCH quantity +1 when adding more item
         })
       })
-      if (!response.ok) {
-        throw new Error(`Failed to add item: ${response.statusText}`);
-      }
+      let json = await response.json()
+      
 
-      let json = await response.json();
-      console.log(json);
     } catch (error) {
-      console.error('Error in adding item quantity', error);
+      console.error ('error in adding item quantity', error)
     }
   }
 

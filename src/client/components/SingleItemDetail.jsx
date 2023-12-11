@@ -9,7 +9,6 @@ function ItemDetails({ token, cart, setCart }) {
   useEffect(() => {
     console.log("Item ID:", itemid);
 
-  
     if (itemid) {
       fetchSingleItemDetail();
     }
@@ -40,7 +39,7 @@ function ItemDetails({ token, cart, setCart }) {
       console.log("Adding item to cart:", item);
 
       await axios.post(
-        `${API}/orders/${cart.id}/items`,
+        `${API}/orders/add-to-cart`,
         {
           item_id: item.id,
           quantity: 1,
@@ -48,7 +47,6 @@ function ItemDetails({ token, cart, setCart }) {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-          
           },
         }
       );
