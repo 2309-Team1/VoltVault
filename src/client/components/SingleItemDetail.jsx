@@ -39,7 +39,7 @@ function ItemDetails({ token, cart, setCart }) {
       console.log("Adding item to cart:", item);
 
       await axios.post(
-        `${API}/orders/add-to-cart`,
+        `${API}/orders/:orderId/items`,
         {
           item_id: item.id,
           quantity: 1,
