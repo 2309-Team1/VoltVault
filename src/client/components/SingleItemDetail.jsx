@@ -54,7 +54,7 @@ function ItemDetails({ token, cart, setCart }) {
 
       
       const response = await axios.post(
-        `${API}/orders/${cart.id}/items`,
+        `${API}/:orderId/items`,
         {
           item_id: item.id,
           quantity: 1,
