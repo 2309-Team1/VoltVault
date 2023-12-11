@@ -18,11 +18,11 @@ NOTES ON CART.JSX
 
 function Cart ({token, setToken, cart, setCart, user, items, setItems, totalCart, setTotalCart, quantity, setQuantity}) {
 
-useEffect(() => {
-  if (token){
-    fetchCart()
-  }
-}, [token])
+  useEffect(() => {
+    if (token && !cart) {
+      fetchCart();
+    }
+  }, [token, cart]);
 
   async function fetchCart() {
     try {
