@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-function ItemDetails() {
+function ItemDetails({ token, cart, setCart }) {
   const [item, setItem] = useState(null);
   const { itemid } = useParams();
 
   useEffect(() => {
-    fetchSingleItemDetail();
+    console.log("Item ID:", itemid);
+
+    if (itemid) {
+      fetchSingleItemDetail();
+    }
   }, [itemid]);
 
   async function fetchSingleItemDetail() {
@@ -22,56 +26,80 @@ function ItemDetails() {
     }
   }
 
+  // POST Request for Add To Cart
+
+  // 1. Create onClick event handler in button element below;
+  // 2. Create fetch POST function for new cart (refer to line 122 of api/orders.js);
+  // 3. However, only do the above if the user have no open cart (or if !cart);
+  // 4. You may need to pass cart useState from app.jsx;
+  // 5. If a user have an open cart, then run fetch POST function for new item into cart (refer to line 246 of api/orders.js)
+
+
+  const handleAddToCart = async () => {
+    let API = "http://localhost:3000/api";
+
+    try {
+      if (!cart) {
+        
+        const newCartResponse = await axios.post(`${API}/orders`, {
+          order_total: 0, 
+          items: [],
+          isOpen: true,
+        });
+        const newCart = newCartResponse.data;
+        setCart(newCart);
+      }
+
+      console.log("Adding item to cart:", item);
+
+      
+      const response = await axios.post(
+        `${API}/orders/${cart.id}/items`,
+        {
+          item_id: item.id,
+          quantity: 1,
+          isOpen: true, 
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Item added to cart successfully!");
+
+    
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (!item) {
     return (
       <p>
         Loading... <br />
-        <br />A wizard is never late, nor is he early, he arrives precisely when
-        he means to. 🧙‍♂️
+        <br />
+        A wizard is never late, nor is he early, he arrives precisely when he means to. 🧙‍♂️
       </p>
     );
   }
 
-  console.log(item.img);
-
-  /*
-  POST Request for Add To Cart
-
-  1. Create onClick event handler in button element below;
-  2. Create fetch POST function for new cart (refer to line 122 of api/orders.js);
-  3. However, only do the above if the user have no open cart (or if !cart);
-  4. You may need to pass cart useState from app.jsx;
-  5. If a user have an open cart, then run fetch POST function for new item into cart (refer to line 246 of api/orders.js)
-  */
-
   return (
-    <div
-      id="singleItem"
-      className="card mb-3 w-75 mb-3 shadow p-3 mb-5 bg-body-tertiary rounded singleItemDetail"
-    >
+    <div id="singleItem">
       <div className="row g-0">
         <div className="col-md-4">
-          <img
-            src={`/${item.img}`}
-            className="img-fluid rounded-start"
-            alt={`Image of ${item.name}`}
-          />
+          <img src={item.img} alt={`Image of ${item.name}`} />
         </div>
         <div className="col-md-8">
           <div className="card-body">
             <h2 className="card-title pb-2">{item.name} details </h2>
             <p>{item.details}</p>
-            <p className="card-text">
-              <small className="text-body-secondary">Stock: {item.stock}</small>
-            </p>
-            <p className="card-text">
-              <small className="text-body-secondary">
-                Price: ${item.price}
-              </small>
-            </p>
+            <p className="card-text"><small>Stock: {item.stock}</small></p>
+            <p className="card-text"><small>Price: ${item.price}</small></p>
             <br />
-            <button type="button" className="btn btn-outline-success">
-              {" "}
+            <button type="button" className="btn btn-outline-success" onClick={handleAddToCart}>
               Add item to Cart
             </button>
           </div>
