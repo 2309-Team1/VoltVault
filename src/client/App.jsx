@@ -1,20 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import chalk from "chalk";
 import Login from "./components/Login";
 import Navigations from "./components/Navigation";
 import Register from "./components/Register";
-import AllItems from "./components/Allitems";
+import AllItems from "./components/AllItems"; // Adjusted the component name
 import UserAccount from "./components/UserAccount";
 import FilterForComputer from "./components/ComputerFilter";
 import FilterForPhone from "./components/PhoneFilter";
-
 import ItemDetails from "./components/SingleItemDetail";
-
 import AllUsers from "./components/AllUsers";
 import Cart from "./components/Cart";
-
-// import Orders from './components/Orders';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -29,9 +24,6 @@ function App() {
       <h1>{user.id}</h1>
       <Navigations token={token} setToken={setToken} admin={admin} />
       <div className="App">
-        {/* <h1>VoltVault</h1> */}
-        {/* <img id='comp-img' src='./computer.png'></img> */}
-
         <Routes>
           <Route
             path="login"
@@ -67,10 +59,7 @@ function App() {
             path="/items/:itemid"
             element={<ItemDetails token={token} cart={cart} setCart={setCart} />}
           />
-          <Route
-            path="users"
-            element={<AllUsers token={token} admin={admin} />}
-          />
+          <Route path="users" element={<AllUsers token={token} admin={admin} />} />
           <Route
             path="/cart"
             element={

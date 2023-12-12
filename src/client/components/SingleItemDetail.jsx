@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-function ItemDetails({ token, cart, setCart }) {
+function ItemDetails({ token, cart, setCart, setItems, setTotalCart, user }) {
   const [item, setItem] = useState(null);
   const { itemid } = useParams();
+  const API = "http://localhost:3000/api";
 
   useEffect(() => {
     console.log("Item ID:", itemid);
@@ -15,8 +16,6 @@ function ItemDetails({ token, cart, setCart }) {
   }, [itemid]);
 
   async function fetchSingleItemDetail() {
-    let API = "http://localhost:3000/api";
-
     try {
       const response = await axios.get(`${API}/items/${itemid}`);
       setItem(response.data);
@@ -26,23 +25,11 @@ function ItemDetails({ token, cart, setCart }) {
     }
   }
 
-  // POST Request for Add To Cart
-
-  // 1. Create onClick event handler in button element below;
-  // 2. Create fetch POST function for new cart (refer to line 122 of api/orders.js);
-  // 3. However, only do the above if the user have no open cart (or if !cart);
-  // 4. You may need to pass cart useState from app.jsx;
-  // 5. If a user have an open cart, then run fetch POST function for new item into cart (refer to line 246 of api/orders.js)
-
-
   const handleAddToCart = async () => {
-    let API = "http://localhost:3000/api";
-
     try {
       if (!cart) {
-        
         const newCartResponse = await axios.post(`${API}/orders`, {
-          order_total: 0, 
+          order_total: 0,
           items: [],
           isOpen: true,
         });
@@ -52,13 +39,12 @@ function ItemDetails({ token, cart, setCart }) {
 
       console.log("Adding item to cart:", item);
 
-      
       const response = await axios.post(
-        `${API}/:orderId/items`,
+        `${API}/orders/${cart.id}/items`,
         {
           item_id: item.id,
           quantity: 1,
-          isOpen: true, 
+          isOpen: true,
         },
         {
           headers: {
@@ -69,12 +55,34 @@ function ItemDetails({ token, cart, setCart }) {
 
       console.log("Item added to cart successfully!");
 
-    
-
+      // Fetch the updated cart data
+      fetchCart();
     } catch (err) {
       console.error(err);
     }
   };
+
+  async function fetchCart() {
+    try {
+      if (user && user.id) {
+        let response = await axios.get(`${API}/orders/open_orders/${user.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        let json = response.data;
+
+        setItems(json[0].items);
+
+        const totalItemAmount = json[0].items.map((item) => item.price * item.quantity);
+        const overallTotalAmount = totalItemAmount.reduce((acc, cur) => acc + cur, 0);
+        setTotalCart(overallTotalAmount);
+      }
+    } catch (error) {
+      console.error("ERROR! in fetchCart", error);
+    }
+  }
 
   if (!item) {
     return (
