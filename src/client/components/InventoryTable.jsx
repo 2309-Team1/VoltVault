@@ -9,16 +9,16 @@ function InventoryTable({ admin, token }) {
   // EDIT ITEMS CONSTS
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState(0);
-  const [stock, setStock] = useState(0);
+  const [price, setPrice] = useState();
+  const [stock, setStock] = useState();
 
   // CREATE ITEM CONSTS
   const [newItemName, setNewItemName] = useState("");
   const [newItemDetails, setNewItemDetails] = useState("");
-  const [newItemPrice, setNewItemPrice] = useState(0);
+  const [newItemPrice, setNewItemPrice] = useState();
   const [newItemImg, setNewItemImg] = useState("");
   const [newItemCat, setNewItemCat] = useState("");
-  const [newItemStock, setNewItemStock] = useState(0);
+  const [newItemStock, setNewItemStock] = useState();
 
   useEffect(() => {
     fetchAllInventory();
@@ -59,13 +59,13 @@ function InventoryTable({ admin, token }) {
       );
       console.log("POST SENT: ", data);
       console.log(data.img);
-      fetchAllInventory();
       setNewItemName("");
       setNewItemDetails("");
-      setNewItemPrice(0);
+      setNewItemPrice();
       setNewItemImg("");
       setNewItemCat("");
-      setNewItemStock(0);
+      setNewItemStock();
+      fetchAllInventory();
     } catch (err) {
       console.error(err.message);
     }
@@ -83,11 +83,12 @@ function InventoryTable({ admin, token }) {
         }
       );
       console.log("PATCH SENT: ", data);
-      fetchAllInventory();
+
       setName("");
       setDescription("");
-      setPrice(0);
-      setStock(0);
+      setPrice();
+      setStock();
+      fetchAllInventory();
     } catch (err) {
       console.error(err.message);
     }
