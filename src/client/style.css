@@ -48,7 +48,8 @@
 #userStyle,
 #checkoutStyle,
 #noItemCart,
-#cartPage {
+#cartPage,
+.needSignIn {
   height: 100vh;
   background-color: #bfbfbf;
 }
@@ -95,7 +96,8 @@
   text-align: center;
 }
 
-#cartEmpty, #totalAmount {
+#cartEmpty,
+#totalAmount {
   text-align: center;
 }
 
@@ -108,6 +110,8 @@
 .uidTable:hover {
   cursor: pointer;
 }
+
+/* POP-UPS */
 
 #itemEditPopUp {
   display: flex;
