@@ -6,8 +6,8 @@ import Popup from "reactjs-popup";
 function EditItemPopUp({ token, fetchAllInventory, item }) {
   const [name, setName] = useState(item.name || "");
   const [description, setDescription] = useState(item.description || "");
-  const [price, setPrice] = useState(item.price || "");
-  const [stock, setStock] = useState(item.stock || "");
+  const [price, setPrice] = useState(item.price || 0);
+  const [stock, setStock] = useState(item.stock || 0);
 
   async function editItem(id) {
     try {
@@ -25,8 +25,8 @@ function EditItemPopUp({ token, fetchAllInventory, item }) {
       fetchAllInventory();
       setName("");
       setDescription("");
-      setPrice();
-      setStock();
+      setPrice(0);
+      setStock(0);
     } catch (err) {
       console.error(err.message);
     }

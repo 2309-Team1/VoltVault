@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 let API = "http://localhost:3000/api";
-import AddItemPopUp from "./AddItemPopUp";
-import EditItemPopUp from "./EditItemPopUp";
-import DeleteItemPopUp from "./DeleteItemPopUp";
+import Popup from "reactjs-popup";
 
 function InventoryTable({ admin, token }) {
   const [inventory, setInventory] = useState([]);
+
+  // EDIT ITEMS CONSTS
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState(0);
+  const [stock, setStock] = useState(0);
+
+  // CREATE ITEM CONSTS
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemDetails, setNewItemDetails] = useState("");
+  const [newItemPrice, setNewItemPrice] = useState(0);
+  const [newItemImg, setNewItemImg] = useState("");
+  const [newItemCat, setNewItemCat] = useState("");
+  const [newItemStock, setNewItemStock] = useState(0);
 
   useEffect(() => {
     fetchAllInventory();
@@ -26,6 +38,73 @@ function InventoryTable({ admin, token }) {
     }
   }
 
+  async function addItem() {
+    try {
+      const { data } = await axios.post(
+        `${API}/items`,
+        {
+          name: newItemName,
+          price: newItemPrice,
+          details: newItemDetails,
+          img: newItemImg,
+          category: newItemCat,
+          stock: newItemStock,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("POST SENT: ", data);
+      console.log(data.img);
+      fetchAllInventory();
+      setNewItemName("");
+      setNewItemDetails("");
+      setNewItemPrice(0);
+      setNewItemImg("");
+      setNewItemCat("");
+      setNewItemStock(0);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+  async function editItem(id) {
+    try {
+      const { data } = await axios.patch(
+        `${API}/items/${id}`,
+        { name, description, price, stock },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("PATCH SENT: ", data);
+      fetchAllInventory();
+      setName("");
+      setDescription("");
+      setPrice(0);
+      setStock(0);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+  async function destroyItem(id) {
+    try {
+      await axios.delete(`${API}/items/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchAllInventory();
+    } catch (err) {
+      console.error(err);
+    }
+  }
   if (admin) {
     return (
       <>
@@ -42,10 +121,103 @@ function InventoryTable({ admin, token }) {
                   <th scope="col">Stock</th>
                   <th scope="col"></th>
                   <th scope="col">
-                    <AddItemPopUp
-                      token={token}
-                      fetchAllInventory={fetchAllInventory}
-                    />
+                    {" "}
+                    <Popup
+                      trigger={
+                        <button
+                          type="button"
+                          className="btn btn-outline-success s-1"
+                        >
+                          Add Item
+                        </button>
+                      }
+                      position="center"
+                      modal
+                      nested
+                    >
+                      {(close) => (
+                        <div className="p-3 bg-light rounded border border-dark">
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              addItem();
+                              close();
+                            }}
+                          >
+                            <h3>Add New Item</h3>
+                            <label>
+                              Item Name
+                              <input
+                                type="text"
+                                value={newItemName}
+                                onChange={(e) => setNewItemName(e.target.value)}
+                              />
+                            </label>
+                            <label>
+                              Item Details
+                              <textarea
+                                value={newItemDetails}
+                                onChange={(e) =>
+                                  setNewItemDetails(e.target.value)
+                                }
+                              />
+                            </label>
+                            <label>
+                              Category
+                              <select
+                                value={newItemCat}
+                                onChange={(e) => setNewItemCat(e.target.value)}
+                              >
+                                <option value="Phone">Phone</option>
+                                <option value="Computer">Computer</option>
+                              </select>
+                            </label>
+                            <label>
+                              Price
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={newItemPrice}
+                                onChange={(e) =>
+                                  setNewItemPrice(e.target.value)
+                                }
+                              />
+                            </label>
+                            <label>
+                              Stock
+                              <input
+                                type="number"
+                                min="0"
+                                step="1"
+                                value={newItemStock}
+                                onChange={(e) =>
+                                  setNewItemStock(e.target.value)
+                                }
+                              />
+                            </label>
+                            <label>
+                              Image
+                              <input
+                                type="file"
+                                onChange={(e) => setNewItemImg(e.target.value)}
+                                accept="image/png, image/jpeg"
+                              />
+                            </label>
+                            <button type="submit" className="btn btn-success">
+                              Create Item
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-outline-primary"
+                              onClick={() => close()}
+                            >
+                              Cancel
+                            </button>
+                          </form>
+                        </div>
+                      )}
+                    </Popup>
                   </th>
                 </tr>
               </thead>
@@ -58,19 +230,120 @@ function InventoryTable({ admin, token }) {
                       <td>{item.category}</td>
                       <td>{item.price}</td>
                       <td>{item.stock}</td>
+                      {/* ON CLICK -- NAV TO SINGLE ITEM PAGE AND EDIT THERE?  */}
                       <td>
-                        <EditItemPopUp
-                          token={token}
-                          fetchAllInventory={fetchAllInventory}
-                          item={item}
-                        />
+                        <Popup
+                          trigger={
+                            <button className="btn btn-primary s-1">
+                              Edit
+                            </button>
+                          }
+                          position="center"
+                          modal
+                          nested
+                        >
+                          {(close) => (
+                            <div className="p-3 bg-light rounded border border-dark">
+                              <form
+                                id="itemEditPopUp"
+                                onSubmit={(e) => {
+                                  e.preventDefault();
+                                  editItem(item.id);
+                                  close();
+                                }}
+                              >
+                                <label>
+                                  Item Name
+                                  <input
+                                    type="text"
+                                    placeholder={item.name}
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                  />
+                                </label>
+                                <label>
+                                  Item Description
+                                  <textarea
+                                    placeholder={item.description}
+                                    value={description}
+                                    onChange={(e) =>
+                                      setDescription(e.target.value)
+                                    }
+                                  />
+                                </label>
+                                <label>
+                                  Price
+                                  <input
+                                    type="number"
+                                    min="0.01"
+                                    step="0.01"
+                                    placeholder={item.price}
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                  />
+                                </label>
+                                <label>
+                                  Stock
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    placeholder={item.stock}
+                                    value={stock}
+                                    onChange={(e) => setStock(e.target.value)}
+                                  />
+                                </label>
+                                <button
+                                  type="submit"
+                                  className="btn btn-success"
+                                >
+                                  Submit Changes
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => close()}
+                                  className="btn btn-outline-primary"
+                                >
+                                  Close
+                                </button>
+                              </form>
+                            </div>
+                          )}
+                        </Popup>
                       </td>
                       <td>
-                        <DeleteItemPopUp
-                          token={token}
-                          fetchAllInventory={fetchAllInventory}
-                          item={item}
-                        />
+                        <Popup
+                          trigger={
+                            <button className="btn btn-danger s-1">
+                              Delete
+                            </button>
+                          }
+                          position="center"
+                          modal
+                          nested
+                        >
+                          {(close) => (
+                            <div className="p-3 bg-light rounded border border-dark">
+                              <div>Permanently delete {item.name}?</div>
+                              <div>
+                                <button
+                                  onClick={() => {
+                                    destroyItem(item.id);
+                                  }}
+                                  className="btn btn-danger p-1"
+                                >
+                                  Delete Item
+                                </button>
+                                <button
+                                  onClick={() => close()}
+                                  className="btn btn-light p-1"
+                                >
+                                  Close
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </Popup>
                       </td>
                     </tr>
                   );
@@ -82,10 +355,7 @@ function InventoryTable({ admin, token }) {
       </>
     );
   } else {
-    return (
-      <h1 class="needSignIn">You must have admin rights to view this page.</h1>
-    );
+    return <h1>You must have admin rights to view this page.</h1>;
   }
 }
-
 export default InventoryTable;
