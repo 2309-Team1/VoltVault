@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 let API = 'http://localhost:3000/api'
 
 function ItemDetails({token, cart, setCart}) {
   const [item, setItem] = useState(null);
+  const [itemInCart, setItemInCart] = useState (false)
   const { itemid } = useParams();
+  const navigate = useNavigate()
+
 
   useEffect(() => {
     fetchSingleItemDetail();
+    itemInCartFunc()
   }, [itemid]);
 
-  // console.log (cart.items)
-  // const itemsInCart = cart.items
-  // console.log(itemsInCart)
-  // const itemsIdInCart = itemsInCart.map (item => item.id)
-  // console.log (itemsIdInCart)
 
   async function fetchSingleItemDetail() {
     // let API = "http://localhost:3000/api";
@@ -95,6 +94,7 @@ function ItemDetails({token, cart, setCart}) {
       })
       let json = await response.json()
       console.log(json)
+      navigate('/cart')
     } catch (error) {
       console.error ('ERROR ')
     }
@@ -119,7 +119,44 @@ function ItemDetails({token, cart, setCart}) {
     catch (error) {
       console.error ('error in handleAddToCart function', error)
     }
-    
+  }
+
+  async function itemInCartFunc() {
+
+    try {
+      if(cart){
+        console.log (cart.items)
+        const itemsInCurrentCart = cart.items
+        console.log (itemsInCurrentCart)
+        const itemsIdInCurrentCart = itemsInCurrentCart.filter ((item) => item.id == itemid)
+        console.log (itemsIdInCurrentCart)
+        if (itemsIdInCurrentCart.length > 0) {
+          console.log ('item is in cart!')
+          setItemInCart(true)
+        } else {
+          console.log ('item is not in cart!')
+          setItemInCart(false)
+        }
+      }
+      else {
+        console.log ('no cart available!')
+        return false
+      }
+    }
+    catch (error){
+      console.error ('error in checking item in cart', error)
+      return false
+    }
+    // console.log (cart.items)
+    // const itemsInCart = cart.items
+    // console.log(itemsInCart)
+    // const itemsIdInCart = itemsInCart.map (item => item.id)
+    // console.log (itemsIdInCart)
+  }
+
+  async function itemInCartChecker() {
+    const result = await itemInCart()
+    console.log(result)
   }
 
   return (
@@ -148,9 +185,21 @@ function ItemDetails({token, cart, setCart}) {
               </small>
             </p>
             <br />
+
+            {token ? 
+              (itemInCart ? 
+                (<button>item is already in cart</button>) 
+                : 
+                (<button onClick={() => handleAddToCart()} type="button" className="btn btn-outline-success">Add to cart</button>)) 
+              : 
+              (<button>Please login</button>)}
             <button onClick={() => handleAddToCart()} type="button" className="btn btn-outline-success">
               {" "}
               Add item to Cart
+            </button>
+            <button onClick={() => itemInCartChecker()} type="button" className="btn btn-outline-success">
+              {" "}
+              Item in cart checker
             </button>
           </div>
         </div>
