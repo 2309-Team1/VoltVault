@@ -3,15 +3,10 @@ import axios from "axios";
 let API = "http://localhost:3000/api";
 import Popup from "reactjs-popup";
 import AddItemPopUp from "./AddItemPopUp";
+import EditItemPopUp from "./EditItemPopUp";
 
 function InventoryTable({ admin, token }) {
   const [inventory, setInventory] = useState([]);
-
-  // EDIT ITEMS CONSTS
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState();
-  const [stock, setStock] = useState();
 
   useEffect(() => {
     fetchAllInventory();
@@ -28,29 +23,6 @@ function InventoryTable({ admin, token }) {
       setInventory(data);
     } catch (err) {
       console.error(err);
-    }
-  }
-
-  async function editItem(id) {
-    try {
-      const { data } = await axios.patch(
-        `${API}/items/${id}`,
-        { name, description, price, stock },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("PATCH SENT: ", data);
-      fetchAllInventory();
-      setName("");
-      setDescription("");
-      setPrice();
-      setStock();
-    } catch (err) {
-      console.error(err.message);
     }
   }
 
@@ -100,86 +72,13 @@ function InventoryTable({ admin, token }) {
                       <td>{item.category}</td>
                       <td>{item.price}</td>
                       <td>{item.stock}</td>
-                      {/* ON CLICK -- NAV TO SINGLE ITEM PAGE AND EDIT THERE?  */}
                       <td>
-                        <Popup
-                          trigger={
-                            <button className="btn btn-primary s-1">
-                              Edit
-                            </button>
-                          }
-                          position="center"
-                          modal
-                          nested
-                        >
-                          {(close) => (
-                            <div className="p-3 bg-light rounded border border-dark">
-                              <form
-                                id="itemEditPopUp"
-                                onSubmit={(e) => {
-                                  e.preventDefault();
-                                  editItem(item.id);
-                                  close();
-                                }}
-                              >
-                                <label>
-                                  Item Name
-                                  <input
-                                    type="text"
-                                    placeholder={item.name}
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                  />
-                                </label>
-                                <label>
-                                  Item Description
-                                  <textarea
-                                    placeholder={item.description}
-                                    value={description}
-                                    onChange={(e) =>
-                                      setDescription(e.target.value)
-                                    }
-                                  />
-                                </label>
-                                <label>
-                                  Price
-                                  <input
-                                    type="number"
-                                    min="0.01"
-                                    step="0.01"
-                                    placeholder={item.price}
-                                    value={price}
-                                    onChange={(e) => setPrice(e.target.value)}
-                                  />
-                                </label>
-                                <label>
-                                  Stock
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    placeholder={item.stock}
-                                    value={stock}
-                                    onChange={(e) => setStock(e.target.value)}
-                                  />
-                                </label>
-                                <button
-                                  type="submit"
-                                  className="btn btn-success"
-                                >
-                                  Submit Changes
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => close()}
-                                  className="btn btn-outline-primary"
-                                >
-                                  Close
-                                </button>
-                              </form>
-                            </div>
-                          )}
-                        </Popup>
+                        <EditItemPopUp
+                          token={token}
+                          fetchAllInventory={fetchAllInventory}
+                          inventory={inventory}
+                          item={item}
+                        />
                       </td>
                       <td>
                         <Popup
