@@ -5,10 +5,20 @@ import Popup from "reactjs-popup";
 
 function InventoryTable({ admin, token }) {
   const [inventory, setInventory] = useState([]);
+
+  // EDIT ITEMS CONSTS
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState();
   const [stock, setStock] = useState();
+
+  // CREATE ITEM CONSTS
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemDetails, setNewItemDetails] = useState("");
+  const [newItemPrice, setNewItemPrice] = useState();
+  const [newItemImg, setNewItemImg] = useState("");
+  const [newItemCat, setNewItemCat] = useState("");
+  const [newItemStock, setNewItemStock] = useState();
 
   useEffect(() => {
     fetchAllInventory();
@@ -28,6 +38,39 @@ function InventoryTable({ admin, token }) {
     }
   }
 
+  async function addItem() {
+    try {
+      const { data } = await axios.post(
+        `${API}/items`,
+        {
+          name: newItemName,
+          price: newItemPrice,
+          details: newItemDetails,
+          img: newItemImg,
+          category: newItemCat,
+          stock: newItemStock,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("POST SENT: ", data);
+      console.log(data.img);
+      fetchAllInventory();
+      setNewItemName("");
+      setNewItemDetails("");
+      setNewItemPrice();
+      setNewItemImg("");
+      setNewItemCat("");
+      setNewItemStock();
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   async function editItem(id) {
     try {
       const { data } = await axios.patch(
@@ -40,12 +83,12 @@ function InventoryTable({ admin, token }) {
           },
         }
       );
+      console.log("PATCH SENT: ", data);
       fetchAllInventory();
       setName("");
       setDescription("");
-      setPrice("");
-      setStock("");
-      console.log("PATCH SENT: ", data);
+      setPrice();
+      setStock();
     } catch (err) {
       console.error(err.message);
     }
@@ -70,6 +113,93 @@ function InventoryTable({ admin, token }) {
       <>
         <div className="col-11 col-sm-11 col-md-11 col-lg-11 m-5">
           <h1 id="invTitle">Inventory</h1>
+          <Popup
+            trigger={
+              <button type="button" className="btn btn-outline-success s-1">
+                Add User
+              </button>
+            }
+            position="center"
+            modal
+            nested
+          >
+            {(close) => (
+              <div className="p-3 bg-light rounded border border-dark">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    addItem();
+                    close();
+                  }}
+                >
+                  <h3>Add New Item</h3>
+                  <label>
+                    Item Name
+                    <input
+                      type="text"
+                      value={newItemName}
+                      onChange={(e) => setNewItemName(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Item Details
+                    <textarea
+                      value={newItemDetails}
+                      onChange={(e) => setNewItemDetails(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Category
+                    <select
+                      value={newItemCat}
+                      onChange={(e) => setNewItemCat(e.target.value)}
+                    >
+                      <option value="Phone">Phone</option>
+                      <option value="Computer">Computer</option>
+                    </select>
+                  </label>
+                  <label>
+                    Price
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={newItemPrice}
+                      onChange={(e) => setNewItemPrice(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Stock
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={newItemStock}
+                      onChange={(e) => setNewItemStock(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Image
+                    <input
+                      type="file"
+                      onChange={(e) => setNewItemImg(e.target.value)}
+                      accept="image/png, image/jpeg"
+                    />
+                  </label>
+                  <button type="submit" className="btn btn-success">
+                    Create Item
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={() => close()}
+                  >
+                    Cancel
+                  </button>
+                </form>
+              </div>
+            )}
+          </Popup>
           <div className="table-responsive">
             <table className="table table-striped shadow table-hover table-light">
               <thead>
@@ -87,6 +217,7 @@ function InventoryTable({ admin, token }) {
                 {inventory.map((item) => {
                   return (
                     <tr key={item.id}>
+                      <td></td>
                       <td>{item.id}</td>
                       <td>{item.name}</td>
                       <td>{item.category}</td>
