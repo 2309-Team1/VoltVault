@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 let API = "http://localhost:3000/api";
-import Popup from "reactjs-popup";
 import AddItemPopUp from "./AddItemPopUp";
 import EditItemPopUp from "./EditItemPopUp";
+import DeleteItemPopUp from "./DeleteItemPopUp";
 
 function InventoryTable({ admin, token }) {
   const [inventory, setInventory] = useState([]);
@@ -21,20 +21,6 @@ function InventoryTable({ admin, token }) {
         },
       });
       setInventory(data);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function destroyItem(id) {
-    try {
-      await axios.delete(`${API}/items/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      fetchAllInventory();
     } catch (err) {
       console.error(err);
     }
@@ -76,43 +62,15 @@ function InventoryTable({ admin, token }) {
                         <EditItemPopUp
                           token={token}
                           fetchAllInventory={fetchAllInventory}
-                          inventory={inventory}
                           item={item}
                         />
                       </td>
                       <td>
-                        <Popup
-                          trigger={
-                            <button className="btn btn-danger s-1">
-                              Delete
-                            </button>
-                          }
-                          position="center"
-                          modal
-                          nested
-                        >
-                          {(close) => (
-                            <div className="p-3 bg-light rounded border border-dark">
-                              <div>Permanently delete {item.name}?</div>
-                              <div>
-                                <button
-                                  onClick={() => {
-                                    destroyItem(item.id);
-                                  }}
-                                  className="btn btn-danger p-1"
-                                >
-                                  Delete Item
-                                </button>
-                                <button
-                                  onClick={() => close()}
-                                  className="btn btn-light p-1"
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </Popup>
+                        <DeleteItemPopUp
+                          token={token}
+                          fetchAllInventory={fetchAllInventory}
+                          item={item}
+                        />
                       </td>
                     </tr>
                   );
